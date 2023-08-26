@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  # percona:  # Does not work
+  #   image: percona:psmdb-6.0.6
+  #   container_name: percona_container
+  #   restart: always
+  #   command: '--default_authentication_plugin=mysql_native_password --bind_ip_all'
+  #   # healthcheck:
+  #   #   test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]    
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=pass1
+  #     - MYSQL_ROOT_HOST=mysql
+  #     - MYSQL_DATABASE=mydb
+  #     - MYSQL_USER=root
+  #     - MYSQL_PASSWORD=pass1    
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql      
+
+  db_mysql:
+    image: mariadb:latest
+    container_name: mysql_container
+    # command: '--default-authentication-plugin=mysql_native_password'
+    # healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      # interval: 3s
+      # retries: 5
+      # start_period: 30s    
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=RootPsw12345
+      - MYSQL_DATABASE=mydb
+      - MYSQL_USER=root
+      - MYSQL_USER_PASSWORD=UserPsw12345
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - 3306  
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_DB: mypostgresdb
+      POSTGRES_USER: user1
+      POSTGRES_PASSWORD: pass1
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+  mysql_data:
+    driver: local
